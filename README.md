@@ -43,3 +43,5 @@ Here is an example of claude_desktop_config.json file with the server configured
 ## Testing 
 
 To understand if everything works as expected, you can ask Claude what tools are available: 
+
+![Claude Test](https://github.com/user-attachments/assets/693aba6f-d7ee-47ad-9fcd-a966e1935214)
