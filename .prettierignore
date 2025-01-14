@@ -1,0 +1,12 @@
+**/*/.github
+**/*/.next
+**/*/node_modules
+**/*.js
+**/*.d.ts
+**/*.yml
+**/*.json
+**/*.md
+**/*.mdx
+**/*.example.jsx
+**/*.nvmrc
+**/*.prettierignore

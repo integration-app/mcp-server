@@ -1,0 +1,25 @@
+{
+  "scripts": {
+    "start": "tsx src/index.ts"
+  },
+  "type": "module",
+  "dependencies": {
+    "@integration-app/sdk": "^1.5.1",
+    "@modelcontextprotocol/sdk": "^1.0.1",
+    "install": "^0.13.0",
+    "npm": "^10.9.1"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8.56.12",
+    "@types/node": "^22.10.1",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "prettier": "^3.3.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
