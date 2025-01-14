@@ -30,7 +30,7 @@ Here is an example of claude_desktop_config.json file with the server configured
   "mcpServers": {
     "integration-app-hubspot": {
       "command": "npm",
-      "args": ["--prefix", "<path-to-this-repo>", "start"],
+      "args": ["--silent", "--prefix", "<path-to-this-repo>", "start"],
       "env": {
          "INTEGRATION_APP_TOKEN": "<your-integration-app-token>",
          "INTEGRATION_KEY": "hubspot"
