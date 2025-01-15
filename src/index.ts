@@ -1,10 +1,12 @@
+#!/usr/bin/env node
+
 import { Server } from '@modelcontextprotocol/sdk/server/index.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-} from '@modelcontextprotocol/sdk/types'
-import { Tool } from '@modelcontextprotocol/sdk/types'
+} from '@modelcontextprotocol/sdk/types.js'
+import { Tool } from '@modelcontextprotocol/sdk/types.js'
 import { IntegrationAppClient } from '@integration-app/sdk'
 
 
@@ -12,9 +14,7 @@ const client = new IntegrationAppClient({
   token: process.env.INTEGRATION_APP_TOKEN,
 })
 
-await startServer()
-
-async function startServer() {
+export async function startServer() {
   if (!process.env.INTEGRATION_KEY) {
     throw new Error('INTEGRATION_KEY is not set')
   }
@@ -39,7 +39,7 @@ async function startServer() {
     },
   )
 
-  const tools = await getToolsFromActions()
+  const tools = await getToolsFromActions(integrationKey)
 
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools,
@@ -49,7 +49,7 @@ async function startServer() {
     try {
       const { name, arguments: args } = request.params
 
-      const result = await callToolFromAction(name, args)
+      const result = await callToolFromAction(integrationKey, name, args)
 
       return {
         content: [{ type: 'text', text: JSON.stringify(result) }],
@@ -72,9 +72,9 @@ async function startServer() {
   await server.connect(transport)
 }
 
-export async function getToolsFromActions(): Promise<Tool[]> {
+export async function getToolsFromActions(integrationKey: string): Promise<Tool[]> {
   const integration = await client
-    .integration(process.env.INTEGRATION_KEY)
+    .integration(integrationKey)
     .get()
 
   const actions = await client.actions.find({
@@ -94,13 +94,15 @@ export async function getToolsFromActions(): Promise<Tool[]> {
   return tools
 }
 
-export async function callToolFromAction(name: string, args: any) {
+export async function callToolFromAction(integrationKey: string, name: string, args: any) {
   const result = await client
     .actionInstance({
       autoCreate: true,
-      integrationKey: process.env.INTEGRATION_KEY,
+      integrationKey,
       parentKey: name,
     })
     .run(args)
   return result.output
 }
+
+void startServer()

@@ -1,13 +1,26 @@
 {
+  "name": "@integration-app/mcp-server",
+  "version": "1.0.2",
+  "description": "Model Context Protocol server for Integration.app",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "@integration-app/mcp-server": "./dist/index.js"
+  },
   "scripts": {
-    "start": "tsx src/index.ts"
+    "start": "tsx src/index.ts",
+    "build": "tsc",
+    "postbuild": "chmod +x dist/index.js",
+    "prepublishOnly": "npm run build"
   },
   "type": "module",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "dependencies": {
     "@integration-app/sdk": "^1.5.1",
-    "@modelcontextprotocol/sdk": "^1.0.1",
-    "install": "^0.13.0",
-    "npm": "^10.9.1"
+    "@modelcontextprotocol/sdk": "^1.1.1"
   },
   "devDependencies": {
     "@types/eslint": "^8.56.12",
@@ -21,5 +34,8 @@
     "prettier": "^3.3.3",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

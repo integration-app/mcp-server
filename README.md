@@ -11,11 +11,9 @@ To understand how this works and how to effectively manage tools for each applic
 
 ## Running the server
 
-To run the server, you need to:
-* Clone this repository
-* Run `npm i` to install dependencies
-* Configure some actions in your Integration App workspace
-* Get Integration App token from your [Workspace Settings](https://console.integration.app/w/0/settings/testing) page or generate using your Workspace Key and Secret ([Authentication Guide](https://console.integration.app/w/625eb136b4af031bffb2e9eb/docs/getting-started/authentication)).
+1. Install [node.js](https://nodejs.org)
+2. Configure some actions in your Integration App workspace
+3. Get Integration App token from your [Workspace Settings](https://console.integration.app/w/0/settings/testing) page or generate using your Workspace Key and Secret ([Authentication Guide](https://console.integration.app/w/625eb136b4af031bffb2e9eb/docs/getting-started/authentication)).
 
 You need to provide two environment variables to the server:
 * `INTEGRATION_APP_TOKEN` - token for accessing Integration App API
@@ -29,8 +27,8 @@ Here is an example of claude_desktop_config.json file with the server configured
 {
   "mcpServers": {
     "integration-app-hubspot": {
-      "command": "npm",
-      "args": ["--silent", "--prefix", "<path-to-this-repo>", "start"],
+      "command": "npx",
+      "args": ["-y", "@integration-app/mcp-server"],
       "env": {
          "INTEGRATION_APP_TOKEN": "<your-integration-app-token>",
          "INTEGRATION_KEY": "hubspot"
