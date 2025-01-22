@@ -1,4 +1,5 @@
 # Integration App MCP Server 
+[![smithery badge](https://smithery.ai/badge/@integration-app/mcp-server)](https://smithery.ai/server/@integration-app/mcp-server)
 
 ## Overview 
 
@@ -11,6 +12,15 @@ To understand how this works and how to effectively manage tools for each applic
 
 ## Running the server
 
+### Installing via Smithery
+
+To install Integration App Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@integration-app/mcp-server):
+
+```bash
+npx -y @smithery/cli install @integration-app/mcp-server --client claude
+```
+
+### Manual Installation
 1. Install [node.js](https://nodejs.org)
 2. Configure some actions in your Integration App workspace
 3. Get Integration App token from your [Workspace Settings](https://console.integration.app/w/0/settings/testing) page or generate using your Workspace Key and Secret ([Authentication Guide](https://console.integration.app/w/625eb136b4af031bffb2e9eb/docs/getting-started/authentication)).
