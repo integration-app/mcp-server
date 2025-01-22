@@ -1,0 +1,21 @@
+# Smithery configuration file: https://smithery.ai/docs/deployments
+
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required:
+      - integrationAppToken
+      - integrationKey
+    properties:
+      integrationAppToken:
+        type: string
+        description: Token for accessing Integration App API.
+      integrationKey:
+        type: string
+        description: Key of the integration to use tools for.
+  commandFunction:
+    # A function that produces the CLI command to start the MCP on stdio.
+    |-
+    config => ({ command: 'node', args: ['dist/index.js'], env: { INTEGRATION_APP_TOKEN: config.integrationAppToken, INTEGRATION_KEY: config.integrationKey } })
