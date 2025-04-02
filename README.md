@@ -7,7 +7,7 @@ This is an implementation of the [Model Context Protocol (MCP) server](https://m
 ## Managing Tools
 
 This server uses Actions defined in an Integration App workspace as tools. 
-To understand how this works and how to effectively manage tools for each application, please refer to the [Using Tools](https://console.integration.app/docs/building/use-cases/ai/use-tools) guide.
+To understand how this works and how to effectively manage tools for each application, please refer to the [Using Tools](https://console.integration.app/docs/use-cases/ai/use-tools) guide.
 
 ## Running the server
 
