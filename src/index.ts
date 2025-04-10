@@ -42,7 +42,7 @@ export async function startServer() {
   const tools = await getToolsFromActions(integrationKey)
 
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: tools.filter((tool) => tool.inputSchema),
+    tools,
   }))
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -87,7 +87,10 @@ export async function getToolsFromActions(integrationKey: string): Promise<Tool[
     tools.push({
       name: action.key,
       description: action.name,
-      inputSchema: action.inputSchema as any,
+      inputSchema: (action.inputSchema as Tool['inputSchema']) || {
+        type: 'object',
+        properties: undefined,
+      },
     })
   }
 
