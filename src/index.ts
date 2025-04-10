@@ -42,7 +42,7 @@ export async function startServer() {
   const tools = await getToolsFromActions(integrationKey)
 
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools,
+    tools: tools.filter((tool) => tool.inputSchema),
   }))
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
