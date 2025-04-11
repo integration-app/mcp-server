@@ -1,6 +1,6 @@
 {
   "name": "@integration-app/mcp-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Model Context Protocol server for Integration.app",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
