@@ -1,45 +1,108 @@
-# Integration App MCP Server 
+# Integration App MCP Server (SSE)
 
-## Overview 
+This is a remote implementation of the [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) server that exposes tools powered by Integration App. It allows clients to connect and access tools from active connections, using the MCP [SSE transport](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse).
 
-This is an implementation of the [Model Context Protocol (MCP) server](https://modelcontextprotocol.org/) that exposes tools powered by [Integration App](https://integration.app).
+To implement your own MCP client, see our example AI Chat Agent:
+- [AI Chat Agent (MCP Client application)](https://github.com/integration-app/MCP-chat-example)
 
-## Managing Tools
+## Prerequisites
 
-This server uses Actions defined in an Integration App workspace as tools. 
-To understand how this works and how to effectively manage tools for each application, please refer to the [Using Tools](https://console.integration.app/docs/use-cases/ai/use-tools) guide.
+- Node.js (v14 or higher)
+- npm or yarn
+- An Integration App account with a valid JWT token
 
-## Running the server
+## Installation
 
-1. Install [node.js](https://nodejs.org)
-2. Configure some actions in your Integration App workspace
-3. Get Integration App token from your [Workspace Settings](https://console.integration.app/w/0/settings/testing) page or generate using your Workspace Key and Secret ([Authentication Guide](https://console.integration.app/w/625eb136b4af031bffb2e9eb/docs/getting-started/authentication)).
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/integration-app/mcpservice
+   cd mcpservice
+   ```
 
-You need to provide two environment variables to the server:
-* `INTEGRATION_APP_TOKEN` - token for accessing Integration App API
-* `INTEGRATION_KEY` - key of the integration you want to use tools for
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-This server exposes tools from one integration at a time. If you want to expose tools from multiple integrations, you can create multiple servers or modify the code to iterate over multiple integrations.
+3. Build the project:
+   ```bash
+   npm run build
+   ```
 
-Here is an example of claude_desktop_config.json file with the server configured: 
+## Configuration
 
+### Local Development
+
+To run the server locally, start it with:
+```bash
+npm start
+```
+
+The server will run on `http://localhost:3000`.
+
+### Deployment
+
+To deploy the server to a production environment (e.g., Heroku), follow these steps:
+
+1. Ensure your environment variables are set:
+   - `PORT`: The port on which the server will run (default: 3000)
+   - `NODE_ENV`: Set to `production` for production environments
+
+2. Deploy your application using your preferred hosting service (e.g., Heroku, AWS, etc.).
+
+3. Once deployed, your server will be accessible at a URL like:
+   ```
+   https://your-app-name.herokuapp.com/
+   ```
+
+### Connection URL
+
+To connect to the MCP server, use the following URL format:
+```
+https://your-app-name.herokuapp.com/sse?token=YOUR_TOKEN
+```
+
+Or, if the server is running locally:
+```
+http://localhost:3000/sse?token=YOUR_TOKEN
+```
+
+
+### Cursor Configuration
+
+To use this server with Cursor, update your `~/.cursor/mcp.json` file:
 ```json
 {
   "mcpServers": {
-    "integration-app-hubspot": {
-      "command": "npx",
-      "args": ["-y", "@integration-app/mcp-server"],
-      "env": {
-         "INTEGRATION_APP_TOKEN": "<your-integration-app-token>",
-         "INTEGRATION_KEY": "hubspot"
-      }
+    "integration-app": {
+      "url": "https://your-app-name.herokuapp.com/sse?token=YOUR_TOKEN"
     }
   }
 }
 ```
 
-## Testing 
+Restart Cursor for the changes to take effect.
 
-To understand if everything works as expected, you can ask Claude what tools are available: 
+### Claude Configuration
 
-![Claude Test](https://github.com/user-attachments/assets/693aba6f-d7ee-47ad-9fcd-a966e1935214)
+Anthropic only allows SSE MCP tranports to Claude with MAX plan or higher. To use this server with Claude, update your `~/claude_desktop_config.json` file:
+```json
+{
+  "mcpServers": {
+    "integration-app": {
+      "url": "https://your-app-name.herokuapp.com/sse?token=YOUR_TOKEN"
+    }
+  }
+}
+```
+
+## MCP Information
+
+- The server fetches tools from all active connections associated with the provided token.
+- The server supports both SSE (Server-Sent Events) and Streamable HTTP transports.
+
+## Troubleshooting
+
+- Ensure your JWT token is valid and has the necessary permissions.
+- Check server logs for any errors or issues during startup or connection attempts.
+- Verify that your deployment environment has the correct environment variables set.

@@ -1,0 +1,20 @@
+data: {"type":"connected","sessionId":"f2418fc3-9fe5-4ae9-905a-da55c7442711"}
+
+data: {"jsonrpc":"2.0","id":0,"result":{"serverInfo":{"name":"integration-app-hubspot","version":"1.0.0","description":"Working with HubSpot."},"capabilities":{"tools":{"list":true,"execute":true}},"protocolVersion":"2024-11-05","tools":[{"name":"delete-contacts","description":"Delete: Contacts","parameters":{"type":"object","properties":{"ID":{"type":"string"}}}},{"name":"update-contacts","description":"Update: Contacts","parameters":{"type":"object","properties":{"fullname":{"type":"string"},"email":{"type":"string"},"phone":{"type":"string"}}}},{"name":"create-contact","description":"Create Contact","parameters":{"type":"object","properties":{"email":{"type":"string"},"fullname":{"type":"string"}}}}]}}
+
+data: {"jsonrpc":"2.0","method":"notifications/initialized"}
+
+:
+
+data: {"jsonrpc":"2.0","method":"notifications/initialized"}
+
+:
+
+:
+
+data: {"jsonrpc":"2.0","id":2,"result":{"content":[{"type":"text","text":"{\"id\":\"124090217169\"}"}],"isError":false}}
+
+:
+
+:
+
