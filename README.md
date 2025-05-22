@@ -9,14 +9,14 @@ To implement your own MCP client, see our example AI Chat Agent:
 
 - Node.js (v14 or higher)
 - npm or yarn
-- An Integration App account with a valid JWT token
+- An Integration App account
 
 ## Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/integration-app/mcpservice
-   cd mcpservice
+   git clone https://github.com/integration-app/mcp-server
+   cd mcp-server
    ```
 
 2. Install dependencies:
@@ -67,6 +67,7 @@ Or, if the server is running locally:
 http://localhost:3000/sse?token=YOUR_TOKEN
 ```
 
+Replace YOUR_TOKEN with a valid [Integration App Token](https://console.integration.app/docs/getting-started/authentication)
 
 ### Cursor Configuration
 
@@ -103,6 +104,6 @@ Anthropic only allows SSE MCP tranports to Claude with MAX plan or higher. To us
 
 ## Troubleshooting
 
-- Ensure your JWT token is valid and has the necessary permissions.
+- Ensure your Integration App token is valid and has the necessary permissions.
 - Check server logs for any errors or issues during startup or connection attempts.
 - Verify that your deployment environment has the correct environment variables set.
