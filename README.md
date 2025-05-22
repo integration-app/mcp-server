@@ -100,7 +100,7 @@ Anthropic only allows SSE MCP tranports to Claude with MAX plan or higher. To us
 ## MCP Information
 
 - The server fetches tools from all active connections associated with the provided token.
-- The server supports SSE (Server-Sent Events) transports.
+- The server supports [SSE (Server-Sent Events) transports](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse).
 
 ## Troubleshooting
 
