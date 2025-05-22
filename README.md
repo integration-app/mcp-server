@@ -1,6 +1,6 @@
-# Integration App MCP Server (SSE)
+# Integration App MCP Server
 
-This is a remote implementation of the [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) server that exposes tools powered by Integration App. It allows clients to connect and access tools from active connections, using the MCP [SSE transport](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse).
+This is an implementation of the [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) server that exposes tools powered by Integration App. It allows clients to connect and access tools from active connections, using the MCP [SSE transport](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse).
 
 To implement your own MCP client, see our example AI Chat Agent:
 - [AI Chat Agent (MCP Client application)](https://github.com/integration-app/MCP-chat-example)
