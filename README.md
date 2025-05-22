@@ -84,9 +84,9 @@ To use this server with Cursor, update your `~/.cursor/mcp.json` file:
 
 Restart Cursor for the changes to take effect.
 
-### Claude Configuration
+### Claude Desktop Configuration
 
-Anthropic only allows SSE MCP tranports to Claude with MAX plan or higher. To use this server with Claude, update your `~/claude_desktop_config.json` file:
+Anthropic only allows SSE MCP tranports to Claude with MAX plan or higher. To use this server with Claude, update the config file (Settings > Developer > Edit Config):
 ```json
 {
   "mcpServers": {
@@ -100,7 +100,7 @@ Anthropic only allows SSE MCP tranports to Claude with MAX plan or higher. To us
 ## MCP Information
 
 - The server fetches tools from all active connections associated with the provided token.
-- The server supports both SSE (Server-Sent Events) and Streamable HTTP transports.
+- The server supports SSE (Server-Sent Events) transports.
 
 ## Troubleshooting
 
