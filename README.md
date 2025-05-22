@@ -104,6 +104,6 @@ Anthropic only allows SSE MCP tranports to Claude with MAX plan or higher. To us
 
 ## Troubleshooting
 
-- Ensure your Integration App token is valid and has the necessary permissions.
+- Ensure your Integration App token is valid (you're using a [Test Access Token](https://console.integration.app/docs/membrane/customers/customers#test-customer) or generated a token according to [these instructions](https://console.integration.app/docs/getting-started/authentication#access-token))
 - Check server logs for any errors or issues during startup or connection attempts.
 - Verify that your deployment environment has the correct environment variables set.
