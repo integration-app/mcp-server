@@ -67,11 +67,11 @@ Or, if the server is running locally:
 http://localhost:3000/sse?token=YOUR_TOKEN
 ```
 
-Replace YOUR_TOKEN with a valid [Integration App Token](https://console.integration.app/docs/getting-started/authentication)
+Replace YOUR_TOKEN with a valid [Integration App Token](https://console.integration.app/docs/getting-started/authentication). You can get a Test Access Token from the Integration App Console by navigating to Settings > Testing > Test Access Token.
 
 ### Cursor Configuration
 
-To use this server with Cursor, update your `~/.cursor/mcp.json` file:
+To use this server with Cursor, update the `~/.cursor/mcp.json` file:
 ```json
 {
   "mcpServers": {
