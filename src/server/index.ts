@@ -71,9 +71,11 @@ async function addServerTool({
 
 // Factory to create a new McpServer with tools from all integrations
 async function createMcpServer({
-  token
+  token,
+  integrationKey
 }: {
   token: string;
+  integrationKey?: string 
 }) {
   console.log('Creating MCP server instance...');
   
@@ -82,7 +84,9 @@ async function createMcpServer({
   });
 
   console.log('Fetching connections...');
-  const connections = await membrane.connections.find();
+  const connections = await membrane.connections.find(integrationKey ? {
+    integrationKey
+  } : {});
   console.log(`Found ${connections.items.length} connections`);
 
   const server = new McpServer({
@@ -175,6 +179,7 @@ app.all('/mcp', async (req, res) => {
 app.get('/sse', async (req, res) => {
     console.log('Received SSE connection request');
     const token = req.query.token as string;
+    const integrationKey = req.query.integrationKey as string | undefined;
 
     if (!token) {
         console.log('SSE request missing token');
@@ -196,7 +201,8 @@ app.get('/sse', async (req, res) => {
       console.log('Creating new server instance for SSE connection');
       // Create a new server instance per connection
       const server = await createMcpServer({
-        token
+        token,
+        integrationKey
       });
       console.log('Connecting to transport...');
       await server.connect(transport);
