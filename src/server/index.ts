@@ -4,8 +4,10 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { ZodRawShape } from "zod";
 import { Action, IntegrationAppClient } from "@integration-app/sdk";
-import { zodFromJsonSchema } from "./json-schema-to-zod";
+import { zodFromJsonSchema } from "./utils/json-schema-to-zod";
 import cors from "cors";
+import { getAllActionsForIntegration } from "./utils/get-all-actions";
+import { getAllConnections } from "./utils/get-all-connections";
 
 console.log('Starting server initialization...');
 
@@ -15,14 +17,12 @@ async function addServerTool({
   membrane,
   integrationKey,
   integrationName,
-  integrationSlug
 }: {
   server: McpServer;
   action: Action;
   membrane: IntegrationAppClient;
   integrationKey: string;
   integrationName: string;
-  integrationSlug: string;
 }) {
   // ToDo: pass JSON Schema to server directly because it's what being passed to client anyway
   const jsonSchema = {
@@ -30,15 +30,16 @@ async function addServerTool({
     properties: action.inputSchema?.properties || {}
   }
 
-  const zodShape = zodFromJsonSchema(jsonSchema) as unknown as ZodRawShape;
-  
-  // Use the integration's canonical name (slugified) as the prefix for the tool key
-  let toolKey = `${integrationSlug}-${action.key}`;
+  const toolParametersSchema = zodFromJsonSchema(jsonSchema) as unknown as ZodRawShape;
+
+  // Include integration name/key to avoid collisions
+  let toolKey = `${integrationKey}_${action.key}`; // use underscore to make it easier to tell the integration key
+  let toolDescription = `${integrationName}: ${action.name}`; 
 
   // Ensure the total length is under the limit (accounting for server name prefix)
   const maxToolKeyLength = 40; // Allow buffer for server name
+   // Truncate if too long
   if (toolKey.length > maxToolKeyLength) {
-    // Truncate if too long
     const truncatedKey = toolKey.substring(0, maxToolKeyLength);
     console.log(`Tool name truncated from ${toolKey} to ${truncatedKey}`);
     toolKey = truncatedKey;
@@ -46,8 +47,8 @@ async function addServerTool({
 
   server.tool(
     toolKey,
-    `${integrationName}: ${action.name}`, // Add integration name to description
-    zodShape,
+    toolDescription,
+    toolParametersSchema,
     async (args) => {
       try {
         const result = await membrane.actionInstance({
@@ -84,10 +85,11 @@ async function createMcpServer({
   });
 
   console.log('Fetching connections...');
-  const connections = await membrane.connections.find(integrationKey ? {
-    integrationKey
-  } : {});
-  console.log(`Found ${connections.items.length} connections`);
+  
+  const connections = await getAllConnections({
+    integrationKey,
+    membrane,
+  });
 
   const server = new McpServer({
     name: `Integration App MCP Server`,
@@ -97,9 +99,8 @@ async function createMcpServer({
 
   console.log('Fetching actions for all connections...');
   
-  for (const connection of connections.items) {
+  for (const connection of connections) {
     try {
-      // Log the connection to understand its structure
       console.log(`Connection structure:`, JSON.stringify(connection, null, 2));
       
       if (!connection.integration) {
@@ -127,28 +128,22 @@ async function createMcpServer({
       const integration = await membrane.integration(integrationId).get();
       console.log(`Found integration: ${integration.name} (${integration.id})`);
       
-      // Slugify the integration name for use in tool keys
-      const integrationSlug = integration.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      
-      // ToDo: iterate over pages of actions
-      const actions = await membrane.actions.find({
-        integrationId: integration.id,
+      const allActions = await getAllActionsForIntegration({
+        integrationId,
+        membrane,
       });
-      console.log(`Found ${actions.items.length} actions for ${integration.name}`);
 
-      for (const action of actions.items) {
+      for (const action of allActions) {
         await addServerTool({
           server,
           action,
           membrane,
           integrationKey: integration.key,
-          integrationName: integration.name, // Use canonical integration name for description
-          integrationSlug // Use canonical integration name for tool key
+          integrationName: integration.name,
         });
       }
     } catch (error) {
       console.error(`Error processing connection ${connection.id}:`, error);
-      // Continue with next connection
     }
   }
 
@@ -159,8 +154,7 @@ async function createMcpServer({
 console.log('Setting up Express app...');
 const app = express();
 app.use(express.json());
-app.use(cors()); // Enable CORS for all routes
-
+app.use(cors());
 // Store transports for each session type
 const transports = {
   streamable: {} as Record<string, StreamableHTTPServerTransport>,
@@ -232,9 +226,9 @@ app.get('/', (req, res) => {
   res.status(200).send('MCP Server is running. Use /sse endpoint for SSE connections.');
 });
 
-// Use Heroku's dynamic port assignment or default to 3000
 const PORT = process.env.PORT || 3000;
 console.log(`Attempting to start server on port ${PORT}...`);
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

@@ -15,7 +15,7 @@ export function zodFromJsonSchema(schema: any): ZodRawShape {
   return shape
 }
 
-export function zodTypeFromJsonSchema(schema: any): ZodTypeAny {
+function zodTypeFromJsonSchema(schema: any): ZodTypeAny {
   switch (schema?.type) {
     case 'string':
       return z.string();
