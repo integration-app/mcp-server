@@ -9,7 +9,7 @@ export const createMcpServer = () => {
   });
 
   /**
-   * TODO: Add tools to the server
+   * TODO: Add resources to the server
    */
 
   return { mcpServer };
