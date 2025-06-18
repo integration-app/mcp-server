@@ -17,23 +17,22 @@ sseRouter.get('/', async (req, res) => {
    */
   const integrationKey = req.query.integrationKey as string | undefined;
 
-  if (!token) {
-    console.log('SSE request missing token');
-    res.status(400).json({ error: 'Token is required' });
-    return;
-  }
-
-  const transport = new SSEServerTransport('/sse/messages', res);
-  transports.set(transport.sessionId, transport);
-
-  res.on('close', () => {
-    transports.delete(transport.sessionId);
-    console.error(`Transport closed for session ${transport.sessionId}`);
-  });
+  let transport: SSEServerTransport;
 
   const { mcpServer } = createMcpServer();
 
-  try {
+  if (req?.query?.sessionId) {
+    const sessionId = req?.query?.sessionId as string;
+    transport = transports.get(sessionId) as SSEServerTransport;
+    console.error(
+      "Client Reconnecting? This shouldn't happen; when client has a sessionId, GET /sse should not be called again.",
+      transport.sessionId
+    );
+  } else {
+    // Create and store transport for new session
+    transport = new SSEServerTransport('/sse/messages', res);
+    transports.set(transport.sessionId, transport);
+
     const membrane = new IntegrationAppClient({
       token: token,
     });
@@ -52,9 +51,15 @@ sseRouter.get('/', async (req, res) => {
     }
 
     await mcpServer.connect(transport);
-  } catch (error) {
-    console.error('Error in SSE endpoint:', error);
-    res.status(500).end();
+
+    console.error('Client Connected: ', transport.sessionId);
+
+    // Handle close of connection
+    res.on('close', async () => {
+      console.error('Client Disconnected: ', transport.sessionId);
+      transports.delete(transport.sessionId);
+      await mcpServer.close();
+    });
   }
 });
 
