@@ -32,6 +32,7 @@ streamableHttpRouter.post('/', async (req, res) => {
       sessionIdGenerator: () => randomUUID(),
       eventStore, // Enable resumability
       onsessioninitialized: sessionId => {
+        console.error(`Session initialized with ID: ${sessionId}`);
         transports.set(sessionId, transport);
       },
     });
@@ -74,6 +75,7 @@ streamableHttpRouter.post('/', async (req, res) => {
     return;
   }
 
+  console.error(`[${req.method}] [Session ${sessionId}] Method: ${req.body?.method}`);
   await transport.handleRequest(req, res, req.body);
 });
 
