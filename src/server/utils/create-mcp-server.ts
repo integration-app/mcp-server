@@ -1,9 +1,10 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import pkg from '../../../package.json';
 
 export const createMcpServer = () => {
   const mcpServer = new McpServer({
-    name: `Integration App MCP Server`,
-    version: '1.0.0',
+    name: pkg.name,
+    version: pkg.version,
     description: `MCP server for all Integration App connections`,
   });
 
