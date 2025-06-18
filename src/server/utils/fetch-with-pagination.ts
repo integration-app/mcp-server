@@ -1,7 +1,5 @@
 export async function fetchAllWithPagination<T>(
-  fetchFn: (params: {
-    cursor?: string;
-  }) => Promise<{ items: T[]; cursor?: string }>
+  fetchFn: (params: { cursor?: string }) => Promise<{ items: T[]; cursor?: string }>
 ): Promise<T[]> {
   const allItems: T[] = [];
   let cursor: string | undefined;

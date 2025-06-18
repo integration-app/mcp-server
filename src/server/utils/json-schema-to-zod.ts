@@ -12,7 +12,7 @@ export function zodFromJsonSchema(schema: any): ZodRawShape {
     }
   }
 
-  return shape
+  return shape;
 }
 
 function zodTypeFromJsonSchema(schema: any): ZodTypeAny {
