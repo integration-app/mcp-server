@@ -10,7 +10,7 @@ export const sseRouter = express.Router();
 const transports: Record<string, SSEServerTransport> = {};
 
 sseRouter.get('/', async (req, res) => {
-  const token = req.query.token as string;
+  const token = req.token;
 
   /**
    * If integrationKey is provided, MCP server only return tools for the integration

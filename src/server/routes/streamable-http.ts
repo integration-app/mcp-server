@@ -39,7 +39,7 @@ streamableHttpRouter.post('/', async (req, res) => {
     const { mcpServer } = createMcpServer();
 
     const membrane = new IntegrationAppClient({
-      token: '',
+      token: req.token,
     });
 
     const actions = await getActionsForAllConnectedApp({
