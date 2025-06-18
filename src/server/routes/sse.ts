@@ -3,14 +3,18 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { IntegrationAppClient } from '@integration-app/sdk';
 import { addServerTool } from '../utils/tools/add-server-tool';
 import { getActionsForAllConnectedApp } from '../utils/tools/get-actions-for-all-connected-app';
-import { mcpServer } from '../utils/create-mcp-server';
+import { createMcpServer } from '../utils/create-mcp-server';
 
-const router = express.Router();
+export const sseRouter = express.Router();
 
 const transports: Record<string, SSEServerTransport> = {};
 
-router.get('/', async (req, res) => {
+sseRouter.get('/', async (req, res) => {
   const token = req.query.token as string;
+
+  /**
+   * If integrationKey is provided, MCP server only return tools for the integration
+   */
   const integrationKey = req.query.integrationKey as string | undefined;
 
   if (!token) {
@@ -23,9 +27,10 @@ router.get('/', async (req, res) => {
   transports[transport.sessionId] = transport;
 
   res.on('close', () => {
-    console.log(`SSE connection closed for session: ${transport.sessionId}`);
     delete transports[transport.sessionId];
   });
+
+  const { mcpServer } = createMcpServer();
 
   try {
     const membrane = new IntegrationAppClient({
@@ -52,7 +57,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/messages', async (req, res) => {
+sseRouter.post('/messages', async (req, res) => {
   const sessionId = req.query.sessionId as string;
   const transport = transports[sessionId];
 
@@ -63,5 +68,3 @@ router.post('/messages', async (req, res) => {
     res.status(400).send('No transport found for sessionId');
   }
 });
-
-export default router;
