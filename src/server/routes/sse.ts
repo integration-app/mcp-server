@@ -7,7 +7,7 @@ import { createMcpServer } from '../utils/create-mcp-server';
 
 export const sseRouter = express.Router();
 
-const transports: Record<string, SSEServerTransport> = {};
+const transports: Map<string, SSEServerTransport> = new Map<string, SSEServerTransport>();
 
 sseRouter.get('/', async (req, res) => {
   const token = req.token;
@@ -24,10 +24,11 @@ sseRouter.get('/', async (req, res) => {
   }
 
   const transport = new SSEServerTransport('/sse/messages', res);
-  transports[transport.sessionId] = transport;
+  transports.set(transport.sessionId, transport);
 
   res.on('close', () => {
-    delete transports[transport.sessionId];
+    transports.delete(transport.sessionId);
+    console.error(`Transport closed for session ${transport.sessionId}`);
   });
 
   const { mcpServer } = createMcpServer();
@@ -59,7 +60,7 @@ sseRouter.get('/', async (req, res) => {
 
 sseRouter.post('/messages', async (req, res) => {
   const sessionId = req.query.sessionId as string;
-  const transport = transports[sessionId];
+  const transport = transports.get(sessionId);
 
   if (transport) {
     await transport.handlePostMessage(req, res, req.body);
