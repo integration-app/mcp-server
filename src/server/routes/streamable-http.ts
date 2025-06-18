@@ -25,7 +25,7 @@ streamableHttpRouter.post('/', async (req, res) => {
 
   if (sessionId && transports.has(sessionId)) {
     transport = transports.get(sessionId)!;
-  } else if (!sessionId) {
+  } else if (!sessionId || (sessionId && !transports.has(sessionId))) {
     const eventStore = new InMemoryEventStore();
 
     transport = new StreamableHTTPServerTransport({
@@ -83,7 +83,7 @@ streamableHttpRouter.post('/', async (req, res) => {
 streamableHttpRouter.get('/mcp', async (req: Request, res: Response) => {
   console.error('Received MCP GET request');
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
-  if (!sessionId || !transports.has(sessionId)) {
+  if (!sessionId) {
     res.status(400).json({
       jsonrpc: '2.0',
       error: {
