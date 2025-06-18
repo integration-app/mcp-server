@@ -29,8 +29,7 @@ app.use('/sse', authMiddleware, sseRouter);
 app.use('/mcp', authMiddleware, streamableHttpRouter);
 
 const PORT = process.env.PORT || 3000;
-console.log(`Attempting to start server on port ${PORT}...`);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`⚡️ Integration App MCP Server is running on port ${PORT}`);
 });
