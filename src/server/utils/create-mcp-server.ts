@@ -3,9 +3,9 @@ import pkg from '../../../package.json';
 
 export const createMcpServer = () => {
   const mcpServer = new McpServer({
-    name: pkg.name,
+    name: 'Integration App MCP Server',
     version: pkg.version,
-    description: `MCP server for all Integration App connections`,
+    description: pkg.description,
   });
 
   /**
