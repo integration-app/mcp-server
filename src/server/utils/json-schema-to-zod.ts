@@ -26,7 +26,10 @@ function zodTypeFromJsonSchema(schema: any): ZodTypeAny {
     case 'boolean':
       return z.boolean();
     case 'array':
-      return z.array(zodTypeFromJsonSchema(schema.items));
+      return z.array(
+        // membrane may not have an items field on array types, let's default to string
+        schema.items ? zodTypeFromJsonSchema(schema.items) : z.string()
+      );
     case 'object': {
       const shape: ZodRawShape = {};
       const props = schema.properties || {};
