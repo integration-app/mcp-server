@@ -1,5 +1,5 @@
-import { IntegrationAppClient } from "@integration-app/sdk/dist";
-import { fetchAllWithPagination } from "./fetch-with-pagination";
+import { IntegrationAppClient } from '@integration-app/sdk/dist';
+import { fetchAllWithPagination } from './fetch-with-pagination';
 
 export function getAllConnections({
   integrationKey,
