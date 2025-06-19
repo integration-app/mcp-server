@@ -1,4 +1,4 @@
-import { IntegrationAppClient } from '@integration-app/sdk/dist';
+import { IntegrationAppClient } from '@integration-app/sdk';
 import { fetchAllWithPagination } from './fetch-with-pagination';
 
 export function getAllActionsForIntegration({
