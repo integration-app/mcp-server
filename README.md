@@ -1,6 +1,6 @@
 # Integration App MCP Server
 
-This is an implementation of the [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) it provide actions on active connections as tools.
+The Integration App MCP Server is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server, it provides actions for connected integrations as tools.
 
 For implementing your application, see our example AI Chat Agent:
 
@@ -45,27 +45,24 @@ The server will run on `http://localhost:3000`.
 
 Ideally, you'd want to deploy your own instance of this MCP server to any cloud hosting service of your choice.
 
-Environment variables:
+**Environment variables:**
 
 - `PORT`: The port on which the server will run (default: 3000)
 
 ### Connecting to the MCP server
 
-The server support two transports:
+This MCP server support two transports:
 
 - [SSE](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse-deprecated) (Server-Sent Events) - <span style="color: red">Deprecated</span>
 - [HTTP](https://modelcontextprotocol.io/docs/concepts/transports#streamable-http) (Streamable HTTP) - <span style="color: green">Recommended</span>
 
-Each transport has its own endpoint:
-
-- SSE: `/sse`
-- HTTP: `/mcp`
+Each transport has its own endpoint, `/sse` for SSE and `/mcp` for Streamable HTTP.
 
 ### Authentication
 
-You'd need your customers [access token](https://docs.integration.app/docs/authentication#access-token) to connect to the MCP server. The token can be passed as query or via `Authorization` header for all transports.
+You'd need your customer's [access token](https://docs.integration.app/docs/authentication#access-token) to connect to the MCP server. The token can be passed as query or via `Authorization` header for all transports.
 
-**SSE**
+**SSE** (Deprecated)
 
 ```js
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
@@ -79,22 +76,22 @@ await client.connect(
 // ----- or -----
 
 await client.connect(
-    new SSEClientTransport(
-      new URL(
-        `https://{HOSTED_MCP_SERVER_URL}/sse`
-      )
-      {
-        requestInit: {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        },
-      }
+  new SSEClientTransport(
+    new URL(
+      `https://{HOSTED_MCP_SERVER_URL}/sse`
     )
+    {
+      requestInit: {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      },
+    }
+  )
   );
 ```
 
-**Streamable HTTP**
+**Streamable HTTP** (Recommended)
 
 ```js
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
@@ -153,8 +150,18 @@ To use this server with Claude, update the config file (Settings > Developer > E
 }
 ```
 
+### Getting tools for specific integration
+
+The MCP server fetches tools from all active connections associated with the provided token by default.
+
+You can also get tools for a specific integration by passing the `integrationKey` query parameter: `/mcp?token={ACCESS_TOKEN}&integrationKey={INTEGRATION_KEY}`
+
 ## Troubleshooting
 
 - Ensure your access token is valid and you're generating it according to [these instructions](https://docs.integration.app/docs/authentication#access-token)
 - Check the MCP server logs for any errors or issues during startup or connection attempts.
 - Verify that your server is running with `/` endpoint.
+
+## License
+
+This project is licensed under the terms of the ISC open source license. Please refer to [ISC](https://opensource.org/license/isc-license-txt) for the full terms.
