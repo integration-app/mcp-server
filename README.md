@@ -42,18 +42,18 @@ Ideally, you'd want to deploy your own instance of this MCP server to any cloud 
 
 This MCP server support two transports:
 
-- [SSE](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse-deprecated) (Server-Sent Events) - <span style="color: red">Deprecated</span>
-- [HTTP](https://modelcontextprotocol.io/docs/concepts/transports#streamable-http) (Streamable HTTP) - <span style="color: green">Recommended</span>
-
-Each transport has its own endpoint, `/sse` for SSE and `/mcp` for Streamable HTTP.
+| Transport                                                                                                              | Endpoint | Status                                                                 |
+| ---------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
+| [SSE](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse-deprecated) (Server‑Sent Events) | `/sse`   | 🔴 **Deprecated** — deprecated as of November 5, 2024 in MCP spec      |
+| [HTTP](https://modelcontextprotocol.io/docs/concepts/transports#streamable-http) (Streamable HTTP)                     | `/mcp`   | 🟢 **Recommended** — replaces SSE and supports bidirectional streaming |
 
 ### Authentication
 
 Provide an Integration.app access token via query or header:
 
 ```http
-?token=YOUR_ACCESS_TOKEN
-Authorization: Bearer YOUR_ACCESS_TOKEN
+?token=ACCESS_TOKEN
+Authorization: Bearer ACCESS_TOKEN
 ```
 
 **SSE** (Deprecated)
@@ -136,7 +136,7 @@ To use this server with Claude, update the config file (Settings > Developer > E
 }
 ```
 
-###  Integration Scoping
+### Integration Scoping
 
 By default, the MCP server fetches tools from all active connections associated with the provided token.
 
