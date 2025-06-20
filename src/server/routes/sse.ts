@@ -30,7 +30,7 @@ sseRouter.get('/', async (req, res) => {
     );
   } else {
     // Create and store transport for new session
-    transport = new SSEServerTransport('/sse/messages', res);
+    transport = new SSEServerTransport(`/sse/messages?token=${token}`, res);
     transports.set(transport.sessionId, transport);
 
     const membrane = new IntegrationAppClient({
