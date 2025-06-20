@@ -34,9 +34,14 @@ Access it at `http://localhost:3000`
 
 Ideally, you'd want to deploy your own instance of this MCP server to any cloud hosting service of your choice.
 
-**Environment variables:**
+#### Docker
 
-- `PORT`: The port on which the server will run (default: 3000)
+The project includes a Dockerfile for easy containerized deployment.
+
+```bash
+docker build -t integration-app-mcp-server .
+docker run -p 3000:3000 integration-app-mcp-server
+```
 
 ### Connecting to the MCP server
 
@@ -44,7 +49,7 @@ This MCP server support two transports:
 
 | Transport                                                                                                              | Endpoint | Status                                                                 |
 | ---------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
-| [SSE](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse-deprecated) (Server‑Sent Events) | `/sse`   | 🔴 **Deprecated** — deprecated as of November 5, 2024 in MCP spec      |
+| [SSE](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse-deprecated) (Server‑Sent Events) | `/sse`   | 🔴 **Deprecated** — deprecated as of November 5, 2024 in MCP spec      |
 | [HTTP](https://modelcontextprotocol.io/docs/concepts/transports#streamable-http) (Streamable HTTP)                     | `/mcp`   | 🟢 **Recommended** — replaces SSE and supports bidirectional streaming |
 
 ### Authentication
