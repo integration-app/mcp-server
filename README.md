@@ -13,23 +13,12 @@ For implementing your application, see our example AI Chat Agent:
 
 ### Installation
 
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/integration-app/mcp-server
-   cd mcp-server
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Build the project:
-   ```bash
-   npm run build
-   ```
+```bash
+git clone https://github.com/integration-app/mcp-server.git
+cd mcp-server
+npm install
+npm run build
+```
 
 ### Local Development
 
@@ -39,7 +28,7 @@ To run the server locally, start it with:
 npm start
 ```
 
-The server will run on `http://localhost:3000`.
+Access it at `http://localhost:3000`
 
 ### Deployment
 
@@ -60,17 +49,18 @@ Each transport has its own endpoint, `/sse` for SSE and `/mcp` for Streamable HT
 
 ### Authentication
 
-You'd need your customer's [access token](https://docs.integration.app/docs/authentication#access-token) to connect to the MCP server. The token can be passed as query or via `Authorization` header for all transports.
+Provide an Integration.app access token via query or header:
+
+```http
+?token=YOUR_ACCESS_TOKEN
+Authorization: Bearer YOUR_ACCESS_TOKEN
+```
 
 **SSE** (Deprecated)
 
 ```js
-import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
-
-const client = new Client({ name: 'sample-client', version: '1.0.0' });
-
 await client.connect(
-  new SSEClientTransport(new URL(`https://{HOSTED_MCP_SERVER_URL}/sse?token=${ACCESS_TOKEN}`))
+  new SSEClientTransport(new URL(`https://<HOSTED_MCP_SERVER_URL>/sse?token=${ACCESS_TOKEN}`))
 );
 
 // ----- or -----
@@ -78,7 +68,7 @@ await client.connect(
 await client.connect(
   new SSEClientTransport(
     new URL(
-      `https://{HOSTED_MCP_SERVER_URL}/sse`
+      `https://<HOSTED_MCP_SERVER_URL>/sse`
     )
     {
       requestInit: {
@@ -94,13 +84,9 @@ await client.connect(
 **Streamable HTTP** (Recommended)
 
 ```js
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-
-const client = new Client({ name: 'sample-client', version: '1.0.0' });
-
 await client.connect(
   new StreamableHTTPClientTransport(
-    new URL(`https://{HOSTED_MCP_SERVER_URL}/mcp?token=${ACCESS_TOKEN}`)
+    new URL(`https://<HOSTED_MCP_SERVER_URL>/mcp?token=${ACCESS_TOKEN}`)
   )
 );
 
@@ -108,7 +94,7 @@ await client.connect(
 
 await client.connect(
   new StreamableHTTPClientTransport(
-    new URL(`https://{HOSTED_MCP_SERVER_URL}/mcp`)
+    new URL(`https://<HOSTED_MCP_SERVER_URL>/mcp`)
     {
       requestInit: {
         headers: {
@@ -128,7 +114,7 @@ To use this server with Cursor, update the `~/.cursor/mcp.json` file:
 {
   "mcpServers": {
     "integration-app": {
-      "url": "https://{HOSTED_MCP_SERVER_URL}/sse?token={ACCESS_TOKEN}"
+      "url": "https://<HOSTED_MCP_SERVER_URL>/sse?token={ACCESS_TOKEN}"
     }
   }
 }
@@ -144,17 +130,17 @@ To use this server with Claude, update the config file (Settings > Developer > E
 {
   "mcpServers": {
     "integration-app": {
-      "url": "https://{HOSTED_MCP_SERVER_URL}/sse?token={ACCESS_TOKEN}"
+      "url": "https://<HOSTED_MCP_SERVER_URL>/sse?token={ACCESS_TOKEN}"
     }
   }
 }
 ```
 
-### Getting tools for specific integration
+###  Integration Scoping
 
-The MCP server fetches tools from all active connections associated with the provided token by default.
+By default, the MCP server fetches tools from all active connections associated with the provided token.
 
-You can also get tools for a specific integration by passing the `integrationKey` query parameter: `/mcp?token={ACCESS_TOKEN}&integrationKey={INTEGRATION_KEY}`
+You can also get tools for a specific integration by passing the `integrationKey` query parameter: `/mcp?token={ACCESS_TOKEN}&integrationKey=google-calendar`
 
 ## Troubleshooting
 
