@@ -1,25 +1,27 @@
 # Integration App MCP Server
 
-This is an implementation of the [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) server that exposes tools powered by Integration App. It allows clients to connect and access tools from active connections, using the MCP [SSE transport](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse).
+This is an implementation of the [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) it provide actions on active connections as tools.
 
-To implement your own MCP client, see our example AI Chat Agent:
+For implementing your application, see our example AI Chat Agent:
+
 - [AI Chat Agent (MCP Client application)](https://github.com/integration-app/MCP-chat-example)
 
-## Prerequisites
+### Prerequisites
 
 - Node.js (v14 or higher)
-- npm or yarn
-- An Integration App account
+- An [Integration.app](https://integration.app) account
 
-## Installation
+### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/integration-app/mcp-server
    cd mcp-server
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -29,11 +31,10 @@ To implement your own MCP client, see our example AI Chat Agent:
    npm run build
    ```
 
-## Configuration
-
 ### Local Development
 
 To run the server locally, start it with:
+
 ```bash
 npm start
 ```
@@ -42,41 +43,95 @@ The server will run on `http://localhost:3000`.
 
 ### Deployment
 
-To deploy the server to a production environment (e.g., Heroku), follow these steps:
+Ideally, you'd want to deploy your own instance of this MCP server to any cloud hosting service of your choice.
 
-1. Ensure your environment variables are set:
-   - `PORT`: The port on which the server will run (default: 3000)
-   - `NODE_ENV`: Set to `production` for production environments
+Environment variables:
 
-2. Deploy your application using your preferred hosting service (e.g., Heroku, AWS, etc.).
+- `PORT`: The port on which the server will run (default: 3000)
 
-3. Once deployed, your server will be accessible at a URL like:
-   ```
-   https://your-app-name.herokuapp.com/
-   ```
+### Connecting to the MCP server
 
-### Connection URL
+The server support two transports:
 
-To connect to the MCP server, use the following URL format:
+- [SSE](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse-deprecated) (Server-Sent Events) - <span style="color: red">Deprecated</span>
+- [HTTP](https://modelcontextprotocol.io/docs/concepts/transports#streamable-http) (Streamable HTTP) - <span style="color: green">Recommended</span>
+
+Each transport has its own endpoint:
+
+- SSE: `/sse`
+- HTTP: `/mcp`
+
+### Authentication
+
+You'd need your customers [access token](https://docs.integration.app/docs/authentication#access-token) to connect to the MCP server. The token can be passed as query or via `Authorization` header for all transports.
+
+**SSE**
+
+```js
+import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
+
+const client = new Client({ name: 'sample-client', version: '1.0.0' });
+
+await client.connect(
+  new SSEClientTransport(new URL(`https://{HOSTED_MCP_SERVER_URL}/sse?token=${ACCESS_TOKEN}`))
+);
+
+// ----- or -----
+
+await client.connect(
+    new SSEClientTransport(
+      new URL(
+        `https://{HOSTED_MCP_SERVER_URL}/sse`
+      )
+      {
+        requestInit: {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        },
+      }
+    )
+  );
 ```
-https://your-app-name.herokuapp.com/sse?token=YOUR_TOKEN
+
+**Streamable HTTP**
+
+```js
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+
+const client = new Client({ name: 'sample-client', version: '1.0.0' });
+
+await client.connect(
+  new StreamableHTTPClientTransport(
+    new URL(`https://{HOSTED_MCP_SERVER_URL}/mcp?token=${ACCESS_TOKEN}`)
+  )
+);
+
+// ----- or -----
+
+await client.connect(
+  new StreamableHTTPClientTransport(
+    new URL(`https://{HOSTED_MCP_SERVER_URL}/mcp`)
+    {
+      requestInit: {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      },
+    }
+  )
+);
 ```
 
-Or, if the server is running locally:
-```
-http://localhost:3000/sse?token=YOUR_TOKEN
-```
-
-Replace YOUR_TOKEN with a valid [Integration App Token](https://console.integration.app/docs/getting-started/authentication). You can get a Test Access Token from the Integration App Console by navigating to Settings > Testing > Test Access Token.
-
-### Cursor Configuration
+#### Cursor Configuration
 
 To use this server with Cursor, update the `~/.cursor/mcp.json` file:
+
 ```json
 {
   "mcpServers": {
     "integration-app": {
-      "url": "https://your-app-name.herokuapp.com/sse?token=YOUR_TOKEN"
+      "url": "https://{HOSTED_MCP_SERVER_URL}/sse?token={ACCESS_TOKEN}"
     }
   }
 }
@@ -84,26 +139,22 @@ To use this server with Cursor, update the `~/.cursor/mcp.json` file:
 
 Restart Cursor for the changes to take effect.
 
-### Claude Desktop Configuration
+#### Claude Desktop Configuration
 
-Anthropic only allows SSE MCP tranports to Claude with MAX plan or higher. To use this server with Claude, update the config file (Settings > Developer > Edit Config):
+To use this server with Claude, update the config file (Settings > Developer > Edit Config):
+
 ```json
 {
   "mcpServers": {
     "integration-app": {
-      "url": "https://your-app-name.herokuapp.com/sse?token=YOUR_TOKEN"
+      "url": "https://{HOSTED_MCP_SERVER_URL}/sse?token={ACCESS_TOKEN}"
     }
   }
 }
 ```
 
-## MCP Information
-
-- The server fetches tools from all active connections associated with the provided token.
-- The server supports [SSE (Server-Sent Events) transports](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse).
-
 ## Troubleshooting
 
-- Ensure your Integration App token is valid (you're using a [Test Access Token](https://console.integration.app/docs/membrane/customers/customers#test-customer) or generated a token according to [these instructions](https://console.integration.app/docs/getting-started/authentication#access-token))
-- Check server logs for any errors or issues during startup or connection attempts.
-- Verify that your deployment environment has the correct environment variables set.
+- Ensure your access token is valid and you're generating it according to [these instructions](https://docs.integration.app/docs/authentication#access-token)
+- Check the MCP server logs for any errors or issues during startup or connection attempts.
+- Verify that your server is running with `/` endpoint.
