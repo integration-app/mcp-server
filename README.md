@@ -151,8 +151,3 @@ You can also get tools for a specific integration by passing the `integrationKey
 
 - Ensure your access token is valid and you're generating it according to [these instructions](https://docs.integration.app/docs/authentication#access-token)
 - Check the MCP server logs for any errors or issues during startup or connection attempts.
-- Verify that your server is running with `/` endpoint.
-
-## License
-
-This project is licensed under the terms of the ISC open source license. Please refer to [ISC](https://opensource.org/license/isc-license-txt) for the full terms.
