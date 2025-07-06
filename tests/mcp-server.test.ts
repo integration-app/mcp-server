@@ -52,7 +52,6 @@ describe('MCP Server Integration Tests', () => {
       requestInit: {
         headers: {
           Authorization: `Bearer ${TEST_USER_ACCESS_TOKEN}`,
-          'x-chat-id': TEST_CHAT_ID,
         },
       },
     });

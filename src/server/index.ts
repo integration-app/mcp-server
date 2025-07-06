@@ -22,7 +22,7 @@ app.use(
   cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'mcp-session-id', 'x-chat-id', 'last-event-id'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'mcp-session-id', 'last-event-id'],
   })
 );
 app.use(morgan(customMorganFormat));
