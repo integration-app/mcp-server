@@ -1,76 +1,82 @@
 import express from 'express';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
-import { IntegrationAppClient } from '@integration-app/sdk';
-import { addServerTool } from '../utils/tools/add-server-tool';
-import { getActionsForAllConnectedApp } from '../utils/tools/get-actions-for-all-connected-app';
 import { createMcpServer } from '../utils/create-mcp-server';
+
+/**
+ * This is deprecated and will eventually be removed.
+ * Use streamable-http (/mcp) instead.
+ * See: https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http
+ */
 
 export const sseRouter = express.Router();
 
 const transports: Map<string, SSEServerTransport> = new Map<string, SSEServerTransport>();
 
 sseRouter.get('/', async (req, res) => {
-  const token = req.token;
+  try {
+    const token = req.token;
+    const sessionId = req.query.sessionId as string | undefined;
+    const integrationKey = req.query.integrationKey as string | undefined;
 
-  /**
-   * If integrationKey is provided, MCP server only return tools for the integration
-   */
-  const integrationKey = req.query.integrationKey as string | undefined;
+    // Handle existing session
+    if (sessionId) {
+      const transport = transports.get(sessionId);
 
-  let transport: SSEServerTransport;
+      if (!transport) {
+        return res.status(404).json({ error: 'Session not found' });
+      }
 
-  const { mcpServer } = createMcpServer();
+      console.log('Client reconnecting with sessionId:', sessionId);
+      return;
+    }
 
-  if (req?.query?.sessionId) {
-    const sessionId = req?.query?.sessionId as string;
-    transport = transports.get(sessionId) as SSEServerTransport;
-    console.error(
-      "Client Reconnecting? This shouldn't happen; when client has a sessionId, GET /sse should not be called again.",
-      transport.sessionId
-    );
-  } else {
-    // Create and store transport for new session
-    transport = new SSEServerTransport(`/sse/messages?token=${token}`, res);
+    // Create new session
+    const transport = new SSEServerTransport(`/sse/messages?token=${token}`, res);
+
     transports.set(transport.sessionId, transport);
 
-    const membrane = new IntegrationAppClient({
-      token: token,
-    });
-
-    const actions = await getActionsForAllConnectedApp({
-      membrane,
+    const { mcpServer } = await createMcpServer({
+      userAccessToken: req.token!,
       integrationKey,
     });
 
-    for (const action of actions) {
-      await addServerTool({
-        mcpServer,
-        action,
-        membrane,
-      });
-    }
-
     await mcpServer.connect(transport);
 
-    console.error('Client Connected: ', transport.sessionId);
+    console.log('Client Connected:', transport.sessionId);
 
-    // Handle close of connection
-    res.on('close', async () => {
-      console.error('Client Disconnected: ', transport.sessionId);
+    // Handle connection cleanup
+    const cleanup = async () => {
+      console.log('Client Disconnected:', transport.sessionId);
       transports.delete(transport.sessionId);
       await mcpServer.close();
-    });
+    };
+
+    res.on('close', cleanup);
+    res.on('error', cleanup);
+  } catch (error) {
+    console.error('Error in SSE GET handler:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 sseRouter.post('/messages', async (req, res) => {
-  const sessionId = req.query.sessionId as string;
-  const transport = transports.get(sessionId);
+  try {
+    const sessionId = req.query.sessionId as string;
 
-  if (transport) {
+    if (!sessionId) {
+      console.error('No sessionId provided in POST /messages request');
+      return res.status(400).json({ error: 'Session ID required' });
+    }
+
+    const transport = transports.get(sessionId);
+    if (!transport) {
+      console.error(`No transport found for sessionId: ${sessionId}`);
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
     await transport.handlePostMessage(req, res, req.body);
-  } else {
-    console.log(`No transport found for sessionId: ${sessionId}`);
-    res.status(400).send('No transport found for sessionId');
+  } catch (error) {
+    console.error('Error in SSE POST handler:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });

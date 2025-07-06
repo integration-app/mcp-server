@@ -1,5 +1,5 @@
-import { getAllActionsForIntegration } from '../get-all-actions';
-import { getAllConnections } from '../get-all-connections';
+import { getAllActionsForIntegration } from './get-all-actions';
+import { getAllConnections } from './get-all-connections';
 import { IntegrationAppClient } from '@integration-app/sdk';
 
 export async function getActionsForAllConnectedApp({
