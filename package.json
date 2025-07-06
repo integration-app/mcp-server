@@ -5,6 +5,7 @@
   "main": "dist/server/index.js",
   "scripts": {
     "start": "tsx src/server/index.ts",
+    "start:test": "NODE_ENV=test PORT=3009 tsx src/server/index.ts",
     "dev": "tsx watch src/server/index.ts",
     "test": "vitest run --printConsoleTrace=true --silent=false",
     "test:watch": "vitest",

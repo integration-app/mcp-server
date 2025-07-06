@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 
 dotenv.config();
 
-const SERVER_URL = 'http://localhost:3000';
+const SERVER_URL = 'http://localhost:3009';
 const TEST_CHAT_ID = 'chat-123';
 const TEST_USER_ID = 'user-123';
 
