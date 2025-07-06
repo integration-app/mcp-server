@@ -47,24 +47,32 @@ function addServerTool({
   toolName =
     toolName.length > maxToolKeyLength ? toolName.substring(0, maxToolKeyLength) : toolName;
 
-  mcpServer.tool(toolName, toolDescription, toolParametersSchema, async args => {
-    const result = await membrane
-      .actionInstance({
-        autoCreate: true,
-        integrationKey,
-        parentKey: action.key,
-      })
-      .run(args);
+  mcpServer.registerTool(
+    toolName,
+    {
+      title: toolDescription,
+      description: toolDescription,
+      inputSchema: toolParametersSchema,
+    },
+    async args => {
+      const result = await membrane
+        .actionInstance({
+          autoCreate: true,
+          integrationKey,
+          parentKey: action.key,
+        })
+        .run(args);
 
-    return {
-      content: [
-        {
-          type: 'text',
-          text: result.output ? JSON.stringify(result.output) : 'No output',
-        },
-      ],
-    };
-  });
+      return {
+        content: [
+          {
+            type: 'text',
+            text: result.output ? JSON.stringify(result.output) : 'No output',
+          },
+        ],
+      };
+    }
+  );
 }
 
 export const createMcpServer = async ({
