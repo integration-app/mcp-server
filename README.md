@@ -145,7 +145,7 @@ To use this server with Claude, update the config file (Settings > Developer > E
 
 By default, the MCP server fetches tools from all active connections associated with the provided token.
 
-You can also get tools for a specific integration by passing the `integrationKey` query parameter: `/mcp?token={ACCESS_TOKEN}&integrationKey=google-calendar`
+You can also get tools for a specific integration by passing the `integrationKey` query parameter: `/mcp?integrationKey=google-calendar`
 
 ## Troubleshooting
 
