@@ -1,12 +1,15 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import pkg from '../../../package.json';
+import { McpServer, RegisteredTool } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { getActionsForAllConnectedApp } from './membrane/get-actions-for-all-connected-app';
 import { Action, IntegrationAppClient } from '@integration-app/sdk/dist';
 import { MockIntegrationAppClient } from './mocks/mock-integration-app-client';
 import { isTestEnvironment } from './constants';
 import { zodFromJsonSchema } from './json-schema-to-zod';
 import { ZodRawShape } from 'zod';
+import pkg from '../../../package.json';
 
+/**
+ * Register a tool to the MCP server while adding some standardization
+ */
 function addServerTool({
   mcpServer,
   action,
@@ -37,7 +40,7 @@ function addServerTool({
   let toolName = `${integrationKey}_${action.key}`;
   let toolDescription = `${integrationName}: ${action.name}`;
 
-  mcpServer.registerTool(
+  const tool = mcpServer.registerTool(
     toolName,
     {
       title: toolDescription,
@@ -63,22 +66,27 @@ function addServerTool({
       };
     }
   );
+
+  return { tool, toolName };
+}
+
+export interface CreateMcpServerParams {
+  userAccessToken: string;
+  integrationKey?: string;
+  mode?: 'dynamic' | 'static';
 }
 
 export const createMcpServer = async ({
   userAccessToken,
   integrationKey,
-}: {
-  userAccessToken: string;
-  integrationKey?: string;
-}) => {
+  mode = 'static',
+}: CreateMcpServerParams) => {
   const mcpServer = new McpServer({
     name: 'Integration App MCP Server',
     version: pkg.version,
     description: pkg.description,
   });
 
-  let actions: Action[] = [];
   let membrane: IntegrationAppClient;
 
   if (isTestEnvironment) {
@@ -92,20 +100,74 @@ export const createMcpServer = async ({
    *
    * If `integrationKey` is provided, MCP server only return tools for the integration
    */
-  actions = await getActionsForAllConnectedApp({ membrane, integrationKey });
+  const actions = await getActionsForAllConnectedApp({ membrane, integrationKey });
 
-  for (const action of actions) {
-    try {
-      await addServerTool({ mcpServer, action, membrane });
-    } catch (error) {
-      console.error(`Failed to add server tool for action: ${action.name}`, error);
+  if (mode === 'static') {
+    for (const action of actions) {
+      addServerTool({ mcpServer, action, membrane });
     }
   }
-  console.log(`Added ${actions.length} tools`);
 
-  /**
-   * TODO: Add resources to the server
-   */
+  if (mode === 'dynamic') {
+    const registeredTools: Record<string, RegisteredTool> = {};
+    const enabledTools: string[] = [];
+
+    mcpServer.registerTool(
+      'enable-tools',
+      {
+        title: 'Enable Tools',
+        description: 'Enable a list of tools for the session',
+        inputSchema: zodFromJsonSchema({
+          type: 'object',
+          properties: {
+            tools: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+          },
+        }),
+      },
+
+      async args => {
+        console.log('>>> Enabling tools', args.tools);
+
+        // Disable all enabled tools
+        for (const tool of enabledTools) {
+          registeredTools[tool]?.disable();
+        }
+
+        // Enable new tools
+        for (const tool of args.tools) {
+          registeredTools[tool]?.enable();
+          enabledTools.push(tool);
+        }
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: 'Tools enabled',
+            },
+          ],
+        };
+      }
+    );
+
+    for (const action of actions) {
+      const addToolResult = addServerTool({ mcpServer, action, membrane });
+
+      if (addToolResult) {
+        registeredTools[addToolResult.toolName] = addToolResult.tool;
+        addToolResult.tool.disable();
+      }
+
+      /**
+       * TODO: Add resources to the server
+       */
+    }
+  }
 
   return { mcpServer };
 };

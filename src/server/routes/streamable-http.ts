@@ -1,7 +1,7 @@
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { randomUUID } from 'crypto';
 import express, { Request, Response } from 'express';
-import { createMcpServer } from '../utils/create-mcp-server';
+import { createMcpServer, CreateMcpServerParams } from '../utils/create-mcp-server';
 import { InMemoryEventStore } from '@modelcontextprotocol/sdk/examples/shared/inMemoryEventStore.js';
 
 export const streamableHttpRouter = express.Router();
@@ -13,6 +13,8 @@ const transports: Map<string, StreamableHTTPServerTransport> = new Map<
 
 streamableHttpRouter.post('/', async (req, res) => {
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
+  const mode = req.query.mode as CreateMcpServerParams['mode'];
+
   let transport: StreamableHTTPServerTransport;
 
   try {
@@ -47,6 +49,7 @@ streamableHttpRouter.post('/', async (req, res) => {
       const { mcpServer } = await createMcpServer({
         userAccessToken: req.token!,
         integrationKey: req.query.integrationKey as string | undefined,
+        mode,
       });
 
       // Connect the transport to the MCP server BEFORE handling the request

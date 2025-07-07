@@ -1,6 +1,6 @@
 import express from 'express';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
-import { createMcpServer } from '../utils/create-mcp-server';
+import { createMcpServer, CreateMcpServerParams } from '../utils/create-mcp-server';
 
 /**
  * This is deprecated and will eventually be removed.
@@ -17,6 +17,7 @@ sseRouter.get('/', async (req, res) => {
     const token = req.token;
     const sessionId = req.query.sessionId as string | undefined;
     const integrationKey = req.query.integrationKey as string | undefined;
+    const mode = req.query.mode as CreateMcpServerParams['mode'];
 
     // Handle existing session
     if (sessionId) {
@@ -38,6 +39,7 @@ sseRouter.get('/', async (req, res) => {
     const { mcpServer } = await createMcpServer({
       userAccessToken: req.token!,
       integrationKey,
+      mode,
     });
 
     await mcpServer.connect(transport);
