@@ -1,8 +1,8 @@
 # Integration App MCP Server
 
-The Integration App MCP Server is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server, it provides actions for connected integrations as tools.
+The Integration App MCP Server is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server, it provides actions for connected integrations on Integration.app membrane as tools.
 
-For implementing your application, see our example AI Chat Agent:
+Here's our official example [AI Chat Agent that uses this MCP server](https://github.com/integration-app/MCP-chat-example) 
 
 - [AI Chat Agent (MCP Client application)](https://github.com/integration-app/MCP-chat-example)
 
@@ -12,7 +12,6 @@ For implementing your application, see our example AI Chat Agent:
 - An [Integration.app](https://integration.app) account
 
 ### Installation
-
 ```bash
 git clone https://github.com/integration-app/mcp-server.git
 cd mcp-server
@@ -63,7 +62,7 @@ This MCP server support two transports:
 
 ### Authentication
 
-Provide an Integration.app access token via query or header:
+Provide an Integration.app access token via query or `Authorization` header:
 
 ```http
 ?token=ACCESS_TOKEN
