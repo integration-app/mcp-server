@@ -37,16 +37,6 @@ function addServerTool({
   let toolName = `${integrationKey}_${action.key}`;
   let toolDescription = `${integrationName}: ${action.name}`;
 
-  /**
-   * Some MCP Clients have a limit of 64 characters for the tool name:
-   * server prefix + tool name
-   * we'll limit it to 48 to account for the server name prefix
-   */
-  const maxToolKeyLength = 50;
-
-  toolName =
-    toolName.length > maxToolKeyLength ? toolName.substring(0, maxToolKeyLength) : toolName;
-
   mcpServer.registerTool(
     toolName,
     {
