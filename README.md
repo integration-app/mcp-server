@@ -22,13 +22,22 @@ npm run build
 
 ### Local Development
 
-To run the server locally, start it with:
+To run the development server locally, start it with:
 
 ```bash
-npm start
+npm run dev
 ```
 
-Access it at `http://localhost:3000`
+The server will be live at `http://localhost:3000` ⚡️
+
+### Running tests
+
+```bash
+npm run start:test
+
+# then run tests
+npm test
+```
 
 ### Deployment
 
@@ -65,12 +74,6 @@ Authorization: Bearer ACCESS_TOKEN
 
 ```js
 await client.connect(
-  new SSEClientTransport(new URL(`https://<HOSTED_MCP_SERVER_URL>/sse?token=${ACCESS_TOKEN}`))
-);
-
-// ----- or -----
-
-await client.connect(
   new SSEClientTransport(
     new URL(
       `https://<HOSTED_MCP_SERVER_URL>/sse`
@@ -89,13 +92,6 @@ await client.connect(
 **Streamable HTTP** (Recommended)
 
 ```js
-await client.connect(
-  new StreamableHTTPClientTransport(
-    new URL(`https://<HOSTED_MCP_SERVER_URL>/mcp?token=${ACCESS_TOKEN}`)
-  )
-);
-
-// ----- or -----
 
 await client.connect(
   new StreamableHTTPClientTransport(
@@ -110,6 +106,50 @@ await client.connect(
   )
 );
 ```
+
+### Static & Dynamic Mode
+
+By default, the MCP server is in `static` mode and will return all tools. In `dynamic` mode (`?mode=dynamic`) the MCP server will only return only a single tool: `enable-tools`, you can use this tool to enable tools for the session.
+
+Your implementation needs to provide a way to find the most relevant tools to the user query, after which you can use the `enable-tools` tool to enable the tools for the session. Ideally you want to prompt LLM to call this tool
+
+See an example implementation in our [AI Chat Agent](https://github.com/integration-app/MCP-chat-example)
+
+```ts
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+
+const client = new Client({
+  name: 'example-integration-app-mcp-client',
+  version: '1.0.0',
+});
+
+const transport = new StreamableHTTPClientTransport(
+  new URL(`https://<HOSTED_MCP_SERVER_URL>/mcp?mode=dynamic`),
+  {
+    requestInit: {
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    },
+  }
+);
+
+await client.connect(transport);
+
+await client.callTool({
+  name: 'enable-tools',
+  arguments: {
+    tools: ['gmail-send-email', 'gmail-read-email'],
+  },
+});
+```
+
+### Getting tools for a specific integrations
+
+In static mode, the MCP server fetches tools from all active connections associated with the provided token.
+
+You can choose to only fetch tools for a specific integration by passing the `apps` query parameter: `/mcp?apps=google-calendar,google-docs`
 
 #### Cursor Configuration
 
@@ -140,12 +180,6 @@ To use this server with Claude, update the config file (Settings > Developer > E
   }
 }
 ```
-
-### Integration Scoping
-
-By default, the MCP server fetches tools from all active connections associated with the provided token.
-
-You can also get tools for a specific integration by passing the `integrationKey` query parameter: `/mcp?integrationKey=google-calendar`
 
 ## Troubleshooting
 
