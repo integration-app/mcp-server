@@ -1,17 +1,16 @@
-# Integration App MCP Server
+# 🚀 Integration App MCP Server
 
 The Integration App MCP Server is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server, it provides actions for connected integrations on Integration.app membrane as tools.
 
-Here's our official example [AI Chat Agent that uses this MCP server](https://github.com/integration-app/MCP-chat-example) 
+Here's our official [AI Agent Example](https://github.com/integration-app/ai-agent-example) that shows you how to use this MCP server in your application.
 
-- [AI Chat Agent (MCP Client application)](https://github.com/integration-app/MCP-chat-example)
-
-### Prerequisites
+### 📋 Prerequisites
 
 - Node.js (v14 or higher)
 - An [Integration.app](https://integration.app) account
 
-### Installation
+### ⚙️ Installation
+
 ```bash
 git clone https://github.com/integration-app/mcp-server.git
 cd mcp-server
@@ -19,7 +18,7 @@ npm install
 npm run build
 ```
 
-### Local Development
+### 🛠️ Local Development
 
 To run the development server locally, start it with:
 
@@ -29,7 +28,7 @@ npm run dev
 
 The server will be live at `http://localhost:3000` ⚡️
 
-### Running tests
+### 🧪 Running tests
 
 ```bash
 npm run start:test
@@ -38,11 +37,11 @@ npm run start:test
 npm test
 ```
 
-### Deployment
+### 🚀 Deployment
 
 Ideally, you'd want to deploy your own instance of this MCP server to any cloud hosting service of your choice.
 
-#### Docker
+#### 🐳 Docker
 
 The project includes a Dockerfile for easy containerized deployment.
 
@@ -51,7 +50,7 @@ docker build -t integration-app-mcp-server .
 docker run -p 3000:3000 integration-app-mcp-server
 ```
 
-### Connecting to the MCP server
+### 🔗 Connecting to the MCP server
 
 This MCP server support two transports:
 
@@ -60,7 +59,7 @@ This MCP server support two transports:
 | [SSE](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse-deprecated) (Server‑Sent Events) | `/sse`   | 🔴 **Deprecated** — deprecated as of November 5, 2024 in MCP spec      |
 | [HTTP](https://modelcontextprotocol.io/docs/concepts/transports#streamable-http) (Streamable HTTP)                     | `/mcp`   | 🟢 **Recommended** — replaces SSE and supports bidirectional streaming |
 
-### Authentication
+### 🔐 Authentication
 
 Provide an Integration.app access token via query or `Authorization` header:
 
@@ -106,13 +105,13 @@ await client.connect(
 );
 ```
 
-### Static & Dynamic Mode
+### ⚡ Static & Dynamic Mode
 
 By default, the MCP server is in `static` mode and will return all tools. In `dynamic` mode (`?mode=dynamic`) the MCP server will only return only a single tool: `enable-tools`, you can use this tool to enable tools for the session.
 
 Your implementation needs to provide a way to find the most relevant tools to the user query, after which you can use the `enable-tools` tool to enable the tools for the session. Ideally you want to prompt LLM to call this tool
 
-See an example implementation in our [AI Chat Agent](https://github.com/integration-app/MCP-chat-example)
+See an example implementation in our [AI Agent Example](https://github.com/integration-app/ai-agent-example)
 
 ```ts
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -144,13 +143,13 @@ await client.callTool({
 });
 ```
 
-### Getting tools for a specific integrations
+### 🔧 Getting tools for a specific integrations
 
 In static mode, the MCP server fetches tools from all active connections associated with the provided token.
 
 You can choose to only fetch tools for a specific integration by passing the `apps` query parameter: `/mcp?apps=google-calendar,google-docs`
 
-#### Cursor Configuration
+#### 📝 Cursor Configuration
 
 To use this server with Cursor, update the `~/.cursor/mcp.json` file:
 
@@ -166,7 +165,7 @@ To use this server with Cursor, update the `~/.cursor/mcp.json` file:
 
 Restart Cursor for the changes to take effect.
 
-#### Claude Desktop Configuration
+#### 🤖 Claude Desktop Configuration
 
 To use this server with Claude, update the config file (Settings > Developer > Edit Config):
 
@@ -180,7 +179,7 @@ To use this server with Claude, update the config file (Settings > Developer > E
 }
 ```
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
 - Ensure your access token is valid and you're generating it according to [these instructions](https://docs.integration.app/docs/authentication#access-token)
 - Check the MCP server logs for any errors or issues during startup or connection attempts.
