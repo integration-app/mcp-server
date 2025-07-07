@@ -1,4 +1,6 @@
-# 🚀 Integration App MCP Server
+# Integration App MCP Server
+<img width="1148" alt="Screenshot 2025-07-07 at 23 03 05" src="https://github.com/user-attachments/assets/39f6cc74-a689-4657-91f3-ee8358c05e31" />
+
 
 The Integration App MCP Server is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server, it provides actions for connected integrations on Integration.app membrane as tools.
 
