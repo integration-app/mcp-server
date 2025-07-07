@@ -18,14 +18,15 @@ const TEST_USER_ACCESS_TOKEN = jwt.sign(
 );
 
 // Helper to create a client and transport
-async function setupClientAndTransport({ integrationKey }: { integrationKey?: string } = {}) {
+async function setupClientAndTransport({ apps }: { apps?: string[] } = {}) {
   const client = new Client({
-    name: `test-client${integrationKey ? '-' + integrationKey : ''}`,
+    name: `test-client${apps && apps.length > 0 ? '-' + apps.join('-') : ''}`,
     version: '1.0.0',
   });
-  const url = integrationKey
-    ? new URL(`${SERVER_URL}/mcp?integrationKey=${integrationKey}`)
-    : new URL(`${SERVER_URL}/mcp`);
+  const url =
+    apps && apps.length > 0
+      ? new URL(`${SERVER_URL}/mcp?apps=${apps.join(',')}`)
+      : new URL(`${SERVER_URL}/mcp`);
   const transport = new StreamableHTTPClientTransport(url, {
     requestInit: {
       headers: {
@@ -119,7 +120,7 @@ describe('MCP Server Integration Tests', () => {
 
     test('should return only google-calendar tools when integration key is google-calendar', async () => {
       const { client, transport } = await setupClientAndTransport({
-        integrationKey: 'google-calendar',
+        apps: ['google-calendar'],
       });
       const tools = await client.listTools();
       const toolNames = tools.tools.map((tool: any) => tool.name);
@@ -129,7 +130,7 @@ describe('MCP Server Integration Tests', () => {
     });
 
     test('should return only gmail tools when integration key is gmail', async () => {
-      const { client, transport } = await setupClientAndTransport({ integrationKey: 'gmail' });
+      const { client, transport } = await setupClientAndTransport({ apps: ['gmail'] });
       const tools = await client.listTools();
       const toolNames = tools.tools.map((tool: any) => tool.name);
       expect(tools.tools.length).toBe(1);
@@ -139,7 +140,7 @@ describe('MCP Server Integration Tests', () => {
 
     test('should return no tools when invalid integration key is provided', async () => {
       const { client, transport } = await setupClientAndTransport({
-        integrationKey: 'invalid-integration',
+        apps: ['invalid-integration'],
       });
       let errorCaught = false;
       try {
@@ -155,7 +156,7 @@ describe('MCP Server Integration Tests', () => {
 
     test('should execute filtered tool successfully', async () => {
       const { client, transport } = await setupClientAndTransport({
-        integrationKey: 'google-calendar',
+        apps: ['google-calendar'],
       });
       const tools = await client.listTools();
       expect(tools.tools.length).toBe(1);
@@ -170,6 +171,18 @@ describe('MCP Server Integration Tests', () => {
           },
         ],
       });
+      await transport.close();
+    });
+
+    test('should return tools for multiple apps when multiple apps are specified', async () => {
+      const { client, transport } = await setupClientAndTransport({
+        apps: ['google-calendar', 'gmail'],
+      });
+      const tools = await client.listTools();
+      const toolNames = tools.tools.map((tool: any) => tool.name);
+      expect(tools.tools.length).toBe(2);
+      expect(toolNames.some((name: string) => name.startsWith('google-calendar_'))).toBe(true);
+      expect(toolNames.some((name: string) => name.startsWith('gmail_'))).toBe(true);
       await transport.close();
     });
   });

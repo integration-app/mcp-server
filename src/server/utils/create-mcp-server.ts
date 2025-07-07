@@ -72,13 +72,13 @@ function addServerTool({
 
 export interface CreateMcpServerParams {
   userAccessToken: string;
-  integrationKey?: string;
+  apps?: string[];
   mode?: 'dynamic' | 'static';
 }
 
 export const createMcpServer = async ({
   userAccessToken,
-  integrationKey,
+  apps,
   mode = 'static',
 }: CreateMcpServerParams) => {
   const mcpServer = new McpServer({
@@ -98,9 +98,9 @@ export const createMcpServer = async ({
   /**
    * Get actions for all connected apps on membrane
    *
-   * If `integrationKey` is provided, MCP server only return tools for the integration
+   * If `apps` is provided, MCP server only return tools for the specified apps
    */
-  const actions = await getActionsForAllConnectedApp({ membrane, integrationKey });
+  const actions = await getActionsForAllConnectedApp({ membrane, apps });
 
   if (mode === 'static') {
     for (const action of actions) {

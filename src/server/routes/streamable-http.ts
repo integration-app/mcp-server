@@ -48,7 +48,9 @@ streamableHttpRouter.post('/', async (req, res) => {
 
       const { mcpServer } = await createMcpServer({
         userAccessToken: req.token!,
-        integrationKey: req.query.integrationKey as string | undefined,
+        apps: req.query.apps
+          ? (req.query.apps as string).split(',').map(app => app.trim())
+          : undefined,
         mode,
       });
 

@@ -16,7 +16,9 @@ sseRouter.get('/', async (req, res) => {
   try {
     const token = req.token;
     const sessionId = req.query.sessionId as string | undefined;
-    const integrationKey = req.query.integrationKey as string | undefined;
+    const apps = req.query.apps
+      ? (req.query.apps as string).split(',').map(app => app.trim())
+      : undefined;
     const mode = req.query.mode as CreateMcpServerParams['mode'];
 
     // Handle existing session
@@ -38,7 +40,7 @@ sseRouter.get('/', async (req, res) => {
 
     const { mcpServer } = await createMcpServer({
       userAccessToken: req.token!,
-      integrationKey,
+      apps,
       mode,
     });
 

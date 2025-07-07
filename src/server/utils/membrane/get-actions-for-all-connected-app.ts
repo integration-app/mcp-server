@@ -4,13 +4,13 @@ import { IntegrationAppClient } from '@integration-app/sdk';
 
 export async function getActionsForAllConnectedApp({
   membrane,
-  integrationKey,
+  apps,
 }: {
   membrane: IntegrationAppClient;
-  integrationKey?: string;
+  apps?: string[];
 }) {
   const connections = await getAllConnections({
-    integrationKey,
+    apps,
     membrane,
   });
 

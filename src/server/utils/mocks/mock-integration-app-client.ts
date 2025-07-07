@@ -65,7 +65,7 @@ export class MockIntegrationAppClient {
   };
 
   connections = {
-    find: async (params: any) => {
+    find: async (params: { integrationKey?: string }) => {
       const allConnections = [
         {
           id: '1',
@@ -83,10 +83,13 @@ export class MockIntegrationAppClient {
         },
       ];
 
-      // Filter by integrationKey if provided
-      const filteredConnections = params.integrationKey
-        ? allConnections.filter(connection => connection.integration.key === params.integrationKey)
-        : allConnections;
+      let filteredConnections = allConnections;
+
+      if (params.integrationKey) {
+        filteredConnections = allConnections.filter(
+          connection => connection.integration.key === params.integrationKey
+        );
+      }
 
       return {
         items: filteredConnections,
