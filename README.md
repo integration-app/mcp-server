@@ -41,7 +41,7 @@ npm test
 
 ### 🚀 Deployment
 
-Ideally, you'd want to deploy your own instance of this MCP server to any cloud hosting service of your choice.
+Deploy your own instance of this MCP server to any cloud hosting service of your choice.
 
 #### 🐳 Docker
 
@@ -63,7 +63,7 @@ This MCP server support two transports:
 
 ### 🔐 Authentication
 
-Provide an Integration.app access token via query or `Authorization` header:
+Provide an [Integration.app access token](https://docs.integration.app/docs/authentication#access-token) via query or `Authorization` header:
 
 ```http
 ?token=ACCESS_TOKEN
