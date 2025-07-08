@@ -187,3 +187,4 @@ To use this server with Claude, update the config file (Settings > Developer > E
 
 - Ensure your access token is valid and you're generating it according to [these instructions](https://docs.integration.app/docs/authentication#access-token)
 - Check the MCP server logs for any errors or issues during startup or connection attempts.
+- Use the [MCP Inspector](https://www.npmjs.com/package/@modelcontextprotocol/inspector) for testing and debugging
