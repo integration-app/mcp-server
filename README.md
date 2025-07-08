@@ -4,7 +4,7 @@ The Integration App MCP Server is a [Model Context Protocol (MCP)](https://model
 
 For implementing your application, see our example AI Chat Agent:
 
-- [AI Agent Example](https://github.com/integration-app/ai-agent-example)
+- [AI Chat Agent (MCP Client application)](https://github.com/integration-app/MCP-chat-example)
 
 ### Prerequisites
 
