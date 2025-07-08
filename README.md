@@ -86,7 +86,7 @@ await client.connect(
       },
     }
   )
-  );
+);
 ```
 
 **Streamable HTTP** (Recommended)
