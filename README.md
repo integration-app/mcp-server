@@ -151,7 +151,9 @@ In static mode, the MCP server fetches tools from all active connections associa
 
 You can choose to only fetch tools for a specific integration by passing the `apps` query parameter: `/mcp?apps=google-calendar,google-docs`
 
-#### 📝 Cursor Configuration
+### Configuring other MCP clients
+
+#### 📝 Cursor
 
 To use this server with Cursor, update the `~/.cursor/mcp.json` file:
 
@@ -167,7 +169,7 @@ To use this server with Cursor, update the `~/.cursor/mcp.json` file:
 
 Restart Cursor for the changes to take effect.
 
-#### 🤖 Claude Desktop Configuration
+#### 🤖 Claude Desktop
 
 To use this server with Claude, update the config file (Settings > Developer > Edit Config):
 
@@ -181,7 +183,7 @@ To use this server with Claude, update the config file (Settings > Developer > E
 }
 ```
 
-## 🔧 Troubleshooting
+### 🔧 Troubleshooting
 
 - Ensure your access token is valid and you're generating it according to [these instructions](https://docs.integration.app/docs/authentication#access-token)
 - Check the MCP server logs for any errors or issues during startup or connection attempts.
