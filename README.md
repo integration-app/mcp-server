@@ -1,6 +1,8 @@
 # Integration App MCP Server
 
-<img width="1148" alt="Screenshot 2025-07-07 at 23 03 05" src="https://github.com/user-attachments/assets/39f6cc74-a689-4657-91f3-ee8358c05e31" />
+<a href="https://integration.app/">
+  <img width="1148" alt="Screenshot 2025-07-07 at 23 03 05" src="https://github.com/user-attachments/assets/39f6cc74-a689-4657-91f3-ee8358c05e31" />
+</a>
 
 The Integration App MCP Server is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server, it provides actions for connected integrations on Integration.app membrane as tools.
 
@@ -8,7 +10,7 @@ Here's our official [AI Agent Example](https://github.com/integration-app/ai-age
 
 ### 📋 Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v18 or higher)
 - An [Integration.app](https://integration.app) account
 
 ### ⚙️ Installation
@@ -33,6 +35,7 @@ The server will be live at `http://localhost:3000` ⚡️
 ### 🧪 Running tests
 
 ```bash
+# Run the server in test mode
 npm run start:test
 
 # then run tests
@@ -155,7 +158,7 @@ You can choose to only fetch tools for a specific integration by passing the `ap
 
 ### 💬 Chat Session Management (Experimental)
 
-The MCP server supports persistent chat sessions. Include an `x-chat-id` header in your requests to automatically track sessions for that specific chat. This is an experimental feature provided in addition to standard MCP sessions.
+The MCP server (streamable-http transport only) supports persistent chat sessions. Include an `x-chat-id` header in your requests to automatically track sessions for that specific chat. This is an experimental feature that we provide in addition to standard MCP sessions.
 
 **Starting a new chat session:**
 

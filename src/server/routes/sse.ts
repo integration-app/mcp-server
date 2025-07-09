@@ -3,9 +3,10 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { createMcpServer, CreateMcpServerParams } from '../utils/create-mcp-server';
 
 /**
- * This is deprecated and will eventually be removed.
- * Use streamable-http (/mcp) instead.
+ * MCP Over SSE is deprecated
  * See: https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http
+ *
+ * After now, we should only support streamable-http (/mcp) and remove the /sse endpoint.
  */
 
 export const sseRouter = express.Router();

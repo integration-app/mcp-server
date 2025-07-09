@@ -22,14 +22,23 @@ app.use(
   cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'mcp-session-id', 'x-chat-id', 'last-event-id'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'mcp-session-id',
+      'x-chat-id',
+      'last-event-id',
+    ],
   })
 );
 app.use(morgan(customMorganFormat));
 
 app.get('/', (req, res) => {
   console.log('Health check endpoint called ');
-  res.status(200).send('MCP Server is running. Use /sse endpoint for SSE connections.');
+  res.status(200).send(
+    `MCP Server is running. 
+     Use / sse endpoint for SSE connections and / mcp endpoint for streamable HTTP connections`
+  );
 });
 
 // Legacy SSE endpoints with auth
