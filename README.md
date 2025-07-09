@@ -153,9 +153,9 @@ In static mode, the MCP server fetches tools from all active connections associa
 
 You can choose to only fetch tools for a specific integration by passing the `apps` query parameter: `/mcp?apps=google-calendar,google-docs`
 
-### 💬 Chat Session Management
+### 💬 Chat Session Management (Experimental)
 
-The MCP server supports persistent chat sessions. Include an `x-chat-id` header in your requests to automatically track sessions for that specific chat.
+The MCP server supports persistent chat sessions. Include an `x-chat-id` header in your requests to automatically track sessions for that specific chat. This is an experimental feature provided in addition to standard MCP sessions.
 
 **Starting a new chat session:**
 
@@ -181,7 +181,7 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
 }
 ```
 
-This feature lets you maintain conversation context across multiple requests without creating new sessions each time. Perfect for multi-chat applications! Check out our [AI Agent Example](https://github.com/integration-app/ai-agent-example) to see how this works in practice.
+This feature lets you use same session for a conversation. Check out our [AI Agent Example](https://github.com/integration-app/ai-agent-example) to see how this works in practice.
 
 ### Configuring other MCP clients
 
