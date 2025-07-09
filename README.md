@@ -114,7 +114,7 @@ await client.connect(
 
 By default, the MCP server runs in **static mode**, which means it returns **all available tools** (actions) for all connected integrations.
 
-If you switch to **dynamic mode** (by adding `?mode=dynamic` to your request), the server will only return **one tool**: `enable-tools`. You can use this tool to selectively enable the tools you actually need for that session.
+With **dynamic mode** (`?mode=dynamic`), the server will only return **one tool**: `enable-tools`. You can use this tool to selectively enable the tools you actually need for that session.
 
 In dynamic mode, your implementation should figure out which tools are most relevant to the user's query. Once you've identified them, prompt the LLM to call the `enable-tools` tool with the appropriate list.
 
