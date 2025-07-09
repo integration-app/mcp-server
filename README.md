@@ -1,6 +1,6 @@
 # Integration App MCP Server
-<img width="1148" alt="Screenshot 2025-07-07 at 23 03 05" src="https://github.com/user-attachments/assets/39f6cc74-a689-4657-91f3-ee8358c05e31" />
 
+<img width="1148" alt="Screenshot 2025-07-07 at 23 03 05" src="https://github.com/user-attachments/assets/39f6cc74-a689-4657-91f3-ee8358c05e31" />
 
 The Integration App MCP Server is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server, it provides actions for connected integrations on Integration.app membrane as tools.
 
@@ -107,13 +107,15 @@ await client.connect(
 );
 ```
 
-### ⚡ Static & Dynamic Mode
+### ⚡ Static vs Dynamic Mode
 
-By default, the MCP server is in `static` mode and will return all tools. In `dynamic` mode (`?mode=dynamic`) the MCP server will only return only a single tool: `enable-tools`, you can use this tool to enable tools for the session.
+By default, the MCP server runs in **static mode**, which means it returns **all available tools** (actions) for all connected integrations.
 
-Your implementation needs to provide a way to find the most relevant tools to the user query, after which you can use the `enable-tools` tool to enable the tools for the session. Ideally you want to prompt LLM to call this tool
+If you switch to **dynamic mode** (by adding `?mode=dynamic` to your request), the server will only return **one tool**: `enable-tools`. You can use this tool to selectively enable the tools you actually need for that session.
 
-See an example implementation in our [AI Agent Example](https://github.com/integration-app/ai-agent-example)
+In dynamic mode, your implementation should figure out which tools are most relevant to the user's query. Once you've identified them, prompt the LLM to call the `enable-tools` tool with the appropriate list.
+
+Want to see how this works in practice? Check out our [AI Agent Example](https://github.com/integration-app/ai-agent-example).
 
 ```ts
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -150,6 +152,36 @@ await client.callTool({
 In static mode, the MCP server fetches tools from all active connections associated with the provided token.
 
 You can choose to only fetch tools for a specific integration by passing the `apps` query parameter: `/mcp?apps=google-calendar,google-docs`
+
+### 💬 Chat Session Management
+
+The MCP server supports persistent chat sessions. Include an `x-chat-id` header in your requests to automatically track sessions for that specific chat.
+
+**Starting a new chat session:**
+
+```http
+POST /mcp
+Authorization: Bearer YOUR_ACCESS_TOKEN
+x-chat-id: my-awesome-chat-123
+```
+
+**Retrieving your chat sessions:**
+
+```http
+GET /mcp/sessions
+Authorization: Bearer YOUR_ACCESS_TOKEN
+```
+
+**Response:**
+
+```json
+{
+  "my-awesome-chat-123": "session-uuid-1",
+  "another-chat-456": "session-uuid-2"
+}
+```
+
+This feature lets you maintain conversation context across multiple requests without creating new sessions each time. Perfect for multi-chat applications! Check out our [AI Agent Example](https://github.com/integration-app/ai-agent-example) to see how this works in practice.
 
 ### Configuring other MCP clients
 

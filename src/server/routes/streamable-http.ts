@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import express, { Request, Response } from 'express';
 import { createMcpServer, CreateMcpServerParams } from '../utils/create-mcp-server';
 import { InMemoryEventStore } from '@modelcontextprotocol/sdk/examples/shared/inMemoryEventStore.js';
+import { addToUserSessions, getUserSessions, removeFromUserSessions } from '../utils/user-sessions';
 
 export const streamableHttpRouter = express.Router();
 
@@ -34,6 +35,11 @@ streamableHttpRouter.post('/', async (req, res) => {
           // Store the transport by session ID when session is initialized
           // This avoids race conditions where requests might come in before the session is stored
           transports.set(sessionId, transport);
+
+          const userId = req.userId;
+          const chatId = req.headers['x-chat-id'] as string | undefined;
+
+          addToUserSessions({ userId, chatId, sessionId });
         },
       });
 
@@ -145,6 +151,11 @@ streamableHttpRouter.delete('/', async (req: Request, res: Response) => {
   try {
     const transport = transports.get(sessionId);
     await transport!.handleRequest(req, res);
+
+    const userId = req.userId;
+    const chatId = req.headers['x-chat-id'] as string | undefined;
+
+    removeFromUserSessions({ userId, chatId, sessionId });
   } catch (error) {
     console.error('Error handling session termination:', error);
     if (!res.headersSent) {
@@ -159,4 +170,12 @@ streamableHttpRouter.delete('/', async (req: Request, res: Response) => {
       return;
     }
   }
+});
+
+// Get all the sessions user has opened
+streamableHttpRouter.get('/sessions', async (req: Request, res: Response) => {
+  const userId = req.userId;
+  const sessions = getUserSessions(userId);
+
+  res.json(sessions);
 });

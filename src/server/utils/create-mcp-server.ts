@@ -6,6 +6,7 @@ import { isTestEnvironment } from './constants';
 import { zodFromJsonSchema } from './json-schema-to-zod';
 import { ZodRawShape } from 'zod';
 import pkg from '../../../package.json';
+import { getActionsByKeys } from './membrane/get-actions-by-keys';
 
 /**
  * Register a tool to the MCP server while adding some standardization
@@ -81,11 +82,20 @@ export const createMcpServer = async ({
   apps,
   mode = 'static',
 }: CreateMcpServerParams) => {
-  const mcpServer = new McpServer({
-    name: 'Integration App MCP Server',
-    version: pkg.version,
-    description: pkg.description,
-  });
+  const mcpServer = new McpServer(
+    {
+      name: 'Integration App MCP Server',
+      version: pkg.version,
+      description: pkg.description,
+    },
+    {
+      capabilities: {
+        tools: {
+          listChanged: true,
+        },
+      },
+    }
+  );
 
   let membrane: IntegrationAppClient;
 
@@ -140,8 +150,39 @@ export const createMcpServer = async ({
 
         // Enable new tools
         for (const tool of args.tools) {
-          registeredTools[tool]?.enable();
-          enabledTools.push(tool);
+          /**
+           * There are cases where the tool client is trying to enable is not a registered tool.
+           * In that case, we need to get the action from membrane, register it and enable it.
+           */
+          const isToolRegistered = registeredTools[tool];
+
+          if (isToolRegistered) {
+            registeredTools[tool].enable();
+            enabledTools.push(tool);
+          } else {
+            const actions = await getActionsByKeys(
+              membrane,
+              args.tools.map((toolKey: string) => {
+                const [integrationKey, actionKey] = toolKey.split('_');
+
+                return {
+                  key: actionKey,
+                  integrationKey,
+                };
+              })
+            );
+
+            for (const action of actions) {
+              if (action) {
+                const addedTool = addServerTool({ mcpServer, action, membrane });
+                if (addedTool) {
+                  registeredTools[addedTool.toolName] = addedTool.tool;
+                  addedTool.tool.enable();
+                  enabledTools.push(addedTool.toolName);
+                }
+              }
+            }
+          }
         }
 
         return {
