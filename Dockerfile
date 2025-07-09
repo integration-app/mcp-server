@@ -2,12 +2,21 @@ FROM node:22-alpine
 
 WORKDIR /app
 
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Copy package files
 COPY package*.json ./
 
-RUN npm ci --production --no-fund --no-audit
+# Install all dependencies
+RUN npm ci --no-fund --no-audit
 
+# Copy source code
 COPY . .
 
-RUN npm run build
+# Expose the port (you may need to adjust this based on your server configuration)
+EXPOSE 3000
 
-ENTRYPOINT ["node", "dist/server/index.js"]
+# Start the server
+CMD ["npm", "start"]
